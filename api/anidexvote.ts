@@ -34,5 +34,22 @@ router.post("/score", (req, res) => {
         });
 });
 
+router.put("/updatescore/:pid", (req, res) => {
+    let pid = +req.params.pid;
+
+    const { score } = req.body;
+
+    conn.query('UPDATE `pictureAnime` SET `score`=? where `pid`=?',
+        [score, pid],
+        (err, result) => {
+            if (err) {
+                res.json(err);
+            } else {
+                res.json(result);
+            }
+        });
+});
+
+
 
 

@@ -2,8 +2,8 @@ import mysql from "mysql";
 
 export const conn = mysql.createPool({
   connectionLimit: 10,
-  host: "sql6.freemysqlhosting.net",
-  user: "sql6688898",
-  password: "tVu1lSP6h2",
-  database: "sql6688898",
+  host: "202.28.34.197",
+  user: "web66_65011212143",
+  password: "65011212143@csmsu",
+  database: "web66_65011212143",
 });

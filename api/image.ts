@@ -13,12 +13,8 @@ router.get("/", (req, res) => {
 
 
 router.get("/previous", (req, res) => {
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1); // วันก่อนหน้า
-
-    const formattedYesterday = yesterday.toISOString().split('T')[0]; // แปลงเป็นรูปแบบของ MySQL DATE
-
-    const query = `SELECT * FROM pictureAnime WHERE update_date = '${formattedYesterday}'`; // คำสั่ง SQL เพื่อดึงข้อมูลรูปภาพที่มีวันที่น้อยกว่าเมื่อวาน
+    // คำสั่ง SQL เพื่อดึงข้อมูลรูปภาพที่อัพเดตก่อนวันปัจจุบัน
+    const query = `SELECT * FROM pictureAnime WHERE update_date <= CURRENT_DATE`;
 
     conn.query(query, (err, result) => {
         if (err) {
@@ -29,3 +25,4 @@ router.get("/previous", (req, res) => {
         }
     });
 });
+

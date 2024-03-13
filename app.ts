@@ -4,6 +4,7 @@ import { router as image } from "./api/image";
 import { router as vote } from "./api/vote";
 import { router as anidexvote } from "./api/anidexvote";
 import { router as upload } from "./api/upload";
+import { router as nowscore } from "./api/nowscore";
 
 
 
@@ -33,6 +34,6 @@ app.use("/anidexvote", anidexvote);
 app.use("/upload", upload);
 app.use("/uploads", express.static("uploads"));
 
-
+app.use("/nowscore", nowscore);
 
 

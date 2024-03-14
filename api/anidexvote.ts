@@ -39,8 +39,8 @@ router.put("/updatescore/:pid", (req, res) => {
 
     const { score } = req.body;
 
-    conn.query('UPDATE `pictureAnime` SET `score`=?, `update_date`=? WHERE `pid`=?',
-        [score, new Date(), pid], // แก้ไขเพื่อให้ค่า update_date เป็นวันที่ปัจจุบัน
+    conn.query('UPDATE `pictureAnime` SET `score`=? WHERE `pid`=?',
+        [score, pid], 
         (err, result) => {
             if (err) {
                 res.json(err);
@@ -48,6 +48,7 @@ router.put("/updatescore/:pid", (req, res) => {
                 res.json(result);
             }
         });
+        
 });
 
 

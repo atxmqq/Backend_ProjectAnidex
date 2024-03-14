@@ -12,17 +12,15 @@ router.get("/", (req, res) => {
 })
 
 
-router.get("/previous", (req, res) => {
-    // คำสั่ง SQL เพื่อดึงข้อมูลรูปภาพที่อัพเดตก่อนวันปัจจุบัน
-    const query = `SELECT * FROM pictureAnime WHERE update_date <= CURRENT_DATE`;
+router.get("/:pid", (req, res) => {
+    let pid = +req.params.pid;
 
-    conn.query(query, (err, result) => {
-        if (err) {
-            console.error('Error retrieving data:', err);
-            res.status(500).json({ error: 'Internal Server Error' });
-        } else {
+    conn.query('SELECT * FROM pictureAnime WHERE `pid`=?',
+        [pid],
+        (err, result) => {
             res.json(result);
-        }
-    });
-});
+        })
+})
+
+
 

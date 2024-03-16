@@ -1,6 +1,6 @@
 export interface ImageRespon {
-    pid:      number;
+    pid: number;
     imganime: string;
-    score:    number;
-    uid:      number;
+    score: number;
+    uid: number;
 }

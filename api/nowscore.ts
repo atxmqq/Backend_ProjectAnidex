@@ -29,27 +29,38 @@ router.get("/", (req, res) => {
 router.get("/sevenday_before/:pid", (req, res) => {
     const pid = req.params.pid;
     const sql = `
-        SELECT 
-            pictureAnime.pid,
-            DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL seq.seq DAY), '%Y-%m-%d') AS voting_day,
-            COALESCE(SUM(vote.score), 0) AS total_score_last_7_days
-        FROM (
-            SELECT 0 AS seq UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3
-            UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7
-        ) AS seq
-        LEFT JOIN vote ON DATE(vote.vote_date) = DATE(DATE_SUB(CURDATE(), INTERVAL seq.seq DAY)) AND vote.pid_fk = ?
-        LEFT JOIN pictureAnime ON pictureAnime.pid = vote.pid_fk
-        GROUP BY voting_day, pictureAnime.pid
-        ORDER BY voting_day ASC;
-    `;
-    //ใช้  CURDATE เพื่อให้ได้วันปัจจุบัน และ ใช้ DATE_SUB เพื่อหัก 1 วัน
-    //สร้างตารางชื่อ seq ที่ประกอบด้วยคอลัมน์เดียวชื่อ seq ซึ่งเป็นลำดับตัวเลขจาก 0 ถึง 7 (ช่วง 7 วัน)
+    SELECT 
+      pictureAnime.pid AS pid_fk,
+      DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL seq.seq DAY), '%d') AS vote_date,
+      COALESCE(SUM(vote.score), 0) AS total_score
+    FROM 
+      (SELECT 0 AS seq
+      UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3
+      UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6) AS seq
+    LEFT JOIN 
+        pictureAnime ON pictureAnime.pid = ?
+    LEFT JOIN 
+        vote ON pictureAnime.pid = vote.pid_fk AND DATE(vote.vote_date) = DATE_SUB(CURDATE(), INTERVAL seq.seq DAY)
+    WHERE 
+        pictureAnime.pid = ?
+    GROUP BY 
+        pictureAnime.pid, DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL seq.seq DAY), '%d'), seq.seq
+    ORDER BY 
+        DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL seq.seq DAY), '%d') ASC`;
 
-    conn.query(sql, [pid], (err, result) => {
+    conn.query(sql, [pid, pid], (err, result) => {
         if (err) {
-            res.json(err);
+            console.error("Error fetching total score for bid:", pid, err);
+            res.status(500).json({ error: "Error fetching total score" });
         } else {
-            res.json(result);
+            // ตรวจสอบว่ามีข้อมูลของ bid ที่ระบุหรือไม่
+            if (result.length > 0) {
+                // ส่งข้อมูลคะแนนรวมของบิดและคะแนนรวมของ 7 วันย้อนหลังกลับไป
+                res.status(200).json(result);
+            } else {
+                // หากไม่พบข้อมูลของ bid ที่ระบุ
+                res.status(404).json({ error: "Bid not found or no votes within the last 7 days" });
+            }
         }
     });
 });

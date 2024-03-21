@@ -30,9 +30,9 @@ router.get("/sevenday_before/:pid", (req, res) => {
     const pid = req.params.pid;
     const sql = `
     SELECT 
-      pictureAnime.pid AS pid_fk,
-      DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL seq.seq DAY), '%d') AS vote_date,
-      COALESCE(SUM(vote.score), 0) AS total_score
+      pictureAnime.pid AS pid,
+      DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL seq.seq DAY), '%d') AS voting_day,
+      COALESCE(SUM(vote.score), 0) AS total_score_last_7_days
     FROM 
       (SELECT 0 AS seq
       UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3

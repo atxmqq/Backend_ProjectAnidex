@@ -116,3 +116,32 @@ router.post("/insertPictureAnime", (req, res) => {
         }
     });
 });
+
+
+router.delete("/deleteimg/:pid", (req, res) => {
+    const pid = +req.params.pid;
+
+    //ลบใน vote ก่อน ถ้ามี
+    conn.query("DELETE FROM vote WHERE pid_fk = ?", [pid], (err, Result) => {
+        if (err) {
+            console.error("Error deleting from vote table:", err);
+            res.status(500).json({ error: "Error deleting from vote table" });
+            return;
+        }
+
+        //ลบใน pictureAnime ก่อน ถ้ามี
+        conn.query("DELETE FROM pictureAnime WHERE pid = ?", [pid], (err, Result) => {
+            if (err) {
+                console.error("Error deleting from pictureAnime table:", err);
+                res.status(500).json({ error: "Error deleting from pictureAnime table" });
+                return;
+            }
+
+            res.status(200).json({
+                message: "Successfully deleted from pictureAnime and vote tables",
+                bigbike_affected_rows: Result.affectedRows,
+                vote_affected_rows: Result.affectedRows
+            });
+        });
+    });
+});

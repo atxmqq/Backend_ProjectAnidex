@@ -7,7 +7,7 @@ export const router = express.Router();
 //ดึงผลรวมคะแนนทั้งหมดที่ ไม่รวมปัจจุบัน
 router.get("/", (req, res) => {
     const sql = `
-            SELECT pictureAnime.*, COALESCE(SUM(CASE WHEN vote.vote_date != CURRENT_DATE THEN vote.score ELSE 0 END), 0) AS total_score 
+            SELECT pictureAnime.*, COALESCE(SUM(CASE WHEN vote.vote_date != CURRENT_DATE THEN vote.score ELSE 0 END), 100) AS total_score 
             FROM pictureAnime 
             LEFT JOIN vote ON pictureAnime.pid = vote.pid_fk 
             GROUP BY pictureAnime.pid;

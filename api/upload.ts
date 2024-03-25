@@ -145,3 +145,22 @@ router.delete("/deleteimg/:pid", (req, res) => {
         });
     });
 });
+
+
+
+router.put("/uploadUserProfile/:uid", (req, res) => {
+    let uid = +req.params.uid;
+
+    const { imguser } = req.body;
+
+    conn.query('UPDATE `user` SET `imguser`=? WHERE `uid`=?',
+        [imguser, uid],
+        (err, result) => {
+            if (err) {
+                res.json(err);
+            } else {
+                res.json(result);
+            }
+        });
+
+});

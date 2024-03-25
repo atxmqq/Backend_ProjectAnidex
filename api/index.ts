@@ -73,6 +73,20 @@ router.post('/authen', (req, res) => {
     }
 });
 
+router.get("/:uid", (req, res) => {
+    let uid = +req.params.uid;
+
+    conn.query('SELECT * FROM user WHERE uid = ?',
+        [uid],
+        (err, result) => {
+            if (err) {
+                console.error('Error retrieving user:', err);
+                res.status(500).json({ error: 'Error retrieving user' });
+            } else {
+                res.json(result);
+            }
+        });
+});
 
 //
 router.get("/:token", (req, res) => {
@@ -100,4 +114,21 @@ router.get("/:token", (req, res) => {
 
 
 
-//Upload
+
+
+router.put("/editProfile/:uid", (req, res) => {
+    let uid = +req.params.uid;
+
+    const { username, password } = req.body;
+
+    conn.query('UPDATE `user` SET `username`=?, `password`=? WHERE `uid`=?',
+        [username, password, uid],
+        (err, result) => {
+            if (err) {
+                res.json(err);
+            } else {
+                res.json(result);
+            }
+        });
+
+});

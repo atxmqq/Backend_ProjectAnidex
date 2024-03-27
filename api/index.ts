@@ -90,27 +90,28 @@ router.get("/:uid", (req, res) => {
 
 //
 router.get("/:token", (req, res) => {
-    const token = req.params.token; //รับ token จากพารามิเตอร์ URL
+    const token = req.params.token; // รับ token จากพารามิเตอร์ URL
     try {
         var decoded = jwt.verify(token, genToken);
 
         conn.query("SELECT * FROM user WHERE username = ?", [decoded.username], (err, result) => {
             if (err) {
-                console.log('Error:', err);
-                res.json({ status: "error", massage: "Internet Server Error" });
+                console.error('Error:', err);
+                res.status(500).json({ status: "error", message: "Internal Server Error" });
                 return;
             }
             if (result.length == 0) {
-                res.json({ status: "error", massage: "User not found" });
+                res.status(404).json({ status: "error", message: "User not found" });
                 return;
             }
             res.json(result[0]);
         });
     } catch (error) {
-        console.log('Error:', error);
-
+        console.error('Error:', error);
+        res.status(400).json({ status: "error", message: "Invalid token" });
     }
 });
+
 
 
 

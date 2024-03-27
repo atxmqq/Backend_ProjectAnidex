@@ -90,27 +90,28 @@ router.get("/:uid", (req, res) => {
 
 //
 router.get("/:token", (req, res) => {
-    const token = req.params.token; // รับ token จากพารามิเตอร์ URL
+    const token = req.params.token; //รับ token จากพารามิเตอร์ URL
     try {
         var decoded = jwt.verify(token, genToken);
 
         conn.query("SELECT * FROM user WHERE username = ?", [decoded.username], (err, result) => {
             if (err) {
-                console.error('Error:', err);
-                res.status(500).json({ status: "error", message: "Internal Server Error" });
+                console.log('Error:', err);
+                res.json({ status: "error", massage: "Internet Server Error" });
                 return;
             }
             if (result.length == 0) {
-                res.status(404).json({ status: "error", message: "User not found" });
+                res.json({ status: "error", massage: "User not found" });
                 return;
             }
             res.json(result[0]);
         });
     } catch (error) {
-        console.error('Error:', error);
-        res.status(400).json({ status: "error", message: "Invalid token" });
+        console.log('Error:', error);
+
     }
 });
+
 
 
 
@@ -131,5 +132,3 @@ router.put("/editProfile/:uid", (req, res) => {
         });
 
 });
-
-

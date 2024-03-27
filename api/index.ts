@@ -114,6 +114,21 @@ router.get("/:token", (req, res) => {
 
 
 
+router.put("/editProfile/:uid", (req, res) => {
+    let uid = +req.params.uid;
 
+    const { username, password } = req.body;
+
+    conn.query('UPDATE `user` SET `username`=?, `password`=? WHERE `uid`=?',
+        [username, password, uid],
+        (err, result) => {
+            if (err) {
+                res.json(err);
+            } else {
+                res.json(result);
+            }
+        });
+
+});
 
 

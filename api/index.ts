@@ -148,6 +148,34 @@ router.get("/watchprofile/:uid", (req, res) => {
 });
 
 
+router.get("/watchprofilepid/:pid", (req, res) => {
+    const pid = req.params.pid;
+    const sql = `
+    SELECT u.uid, u.username, u.imguser, p.pid, p.imganime, p.score
+        FROM pictureAnime p
+        JOIN user u ON u.uid = p.uid
+        WHERE p.pid = ?;
+        `;
+
+    conn.query(sql, [pid], (err, result) => {
+        if (err) {
+            console.error("Error fetching profile data for pid:", pid, err);
+            res.status(500).json({ error: "Error fetching profile data" });
+        } else {
+            // ตรวจสอบว่ามีข้อมูลของ pid ที่ระบุหรือไม่
+            if (result.length > 0) {
+                // ส่งข้อมูลโปรไฟล์กลับไป
+                res.status(200).json(result);
+            } else {
+                // หากไม่พบข้อมูลของ pid ที่ระบุ
+                res.status(404).json({ error: "Profile not found" });
+            }
+        }
+    });
+});
+
+
+
 router.get("/byuid/:uid", (req, res) => {
     let uid = +req.params.uid; // แปลง uid เป็นตัวเลข
 

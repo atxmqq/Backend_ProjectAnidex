@@ -119,3 +119,30 @@ router.put("/editProfile/:uid", (req, res) => {
         });
 
 });
+
+
+router.get("/watchprofile/:uid", (req, res) => {
+    const uid = req.params.uid;
+    const sql = `
+    SELECT u.uid, u.username, u.imguser, p.pid, p.imganime, p.score
+        FROM user u
+        JOIN pictureAnime p ON u.uid = p.uid
+        WHERE u.uid = ?;
+        `;
+
+    conn.query(sql, [uid], (err, result) => {
+        if (err) {
+            console.error("Error fetching profile data for uid:", uid, err);
+            res.status(500).json({ error: "Error fetching profile data" });
+        } else {
+            // ตรวจสอบว่ามีข้อมูลของ uid ที่ระบุหรือไม่
+            if (result.length > 0) {
+                // ส่งข้อมูลโปรไฟล์กลับไป
+                res.status(200).json(result);
+            } else {
+                // หากไม่พบข้อมูลของ uid ที่ระบุ
+                res.status(404).json({ error: "Profile not found" });
+            }
+        }
+    });
+});

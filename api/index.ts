@@ -146,3 +146,23 @@ router.get("/watchprofile/:uid", (req, res) => {
         }
     });
 });
+
+
+router.get("/byuid/:uid", (req, res) => {
+    let uid = +req.params.uid; // แปลง uid เป็นตัวเลข
+
+    conn.query('SELECT * FROM user WHERE `uid`=?',
+        [uid],
+        (err, result) => {
+            if (err) {
+                console.error("Error fetching user data for uid:", uid, err);
+                res.status(500).json({ error: "Error fetching user data" });
+            } else {
+                if (result.length > 0) {
+                    res.status(200).json(result);
+                } else {
+                    res.status(404).json({ error: "User not found" });
+                }
+            }
+        });
+});
